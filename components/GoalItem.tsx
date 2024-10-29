@@ -4,6 +4,7 @@ import {
   Button,
   ListRenderItemInfo,
   StyleSheet,
+  Pressable,
 } from "react-native";
 
 interface Props {
@@ -14,29 +15,29 @@ interface Props {
 export default function GoalItem({ goalItem, onDelete }: Props) {
   return (
     <View style={styles.goalItem}>
-      <Text style={styles.goalText}>{goalItem.item}</Text>
-      {/* React Native는 스타일 상속이 없다. */}
-      <Button
-        color="#5e0acc"
-        title="x"
+      <Pressable
+        android_ripple={{ color: "#dddddd" }}
+        style={({ pressed }) => pressed && styles.pressedItem}
         onPress={() => onDelete(goalItem.item)}
-      />
+      >
+        <Text style={styles.goalText}>{goalItem.item}</Text>
+        {/* React Native는 스타일 상속이 없다. */}
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   goalItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     margin: 8,
-    padding: 4,
-    paddingHorizontal: 8,
     borderRadius: 6,
     backgroundColor: "#5e0acc",
   },
+  pressedItem: {
+    opacity: 0.5,
+  },
   goalText: {
+    padding: 8,
     color: "#ffffff",
   },
 });
