@@ -1,12 +1,14 @@
 import "react-native-reanimated";
 
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Button } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import GoalItem from "@/components/GoalItem";
 import GoalInput from "@/components/GoalInput";
 
 export default function RootLayout() {
   const [goals, setGoals] = useState<string[]>([]);
+  const [modalIsVisible, setModalIsVisible] = useState(false);
 
   const addGoalHandler = (goalItem: string) => {
     setGoals((prev) => [...prev, goalItem]);
@@ -17,22 +19,37 @@ export default function RootLayout() {
     setGoals(nextTodos);
   };
 
+  const openModal = () => {
+    setModalIsVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalIsVisible(false);
+  };
+
   return (
-    <View style={styles.appContainer}>
-      <View style={styles.inputContainer}>
-        <GoalInput onGoal={addGoalHandler} goals={goals} />
-      </View>
-      <View style={styles.goalsContainer}>
-        <FlatList
-          data={goals}
-          renderItem={(itemData) => {
-            return (
-              <GoalItem goalItem={itemData} onDelete={deleteGoalHandler} />
-            );
-          }}
+    <>
+      <StatusBar style="light" />
+      <View style={styles.appContainer}>
+        <Button title="Add New Goal" color="#bb8bf9" onPress={openModal} />
+        <GoalInput
+          onGoal={addGoalHandler}
+          goals={goals}
+          isVisible={modalIsVisible}
+          closeModal={closeModal}
         />
+        <View style={styles.goalsContainer}>
+          <FlatList
+            data={goals}
+            renderItem={(itemData) => {
+              return (
+                <GoalItem goalItem={itemData} onDelete={deleteGoalHandler} />
+              );
+            }}
+          />
+        </View>
       </View>
-    </View>
+    </>
   );
 }
 
@@ -42,13 +59,9 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 16,
   },
-  inputContainer: {
-    flex: 1,
-    marginBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#cccccc",
-  },
+
   goalsContainer: {
+    marginTop: 16,
     flex: 7,
   },
 });
