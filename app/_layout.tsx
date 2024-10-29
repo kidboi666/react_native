@@ -1,73 +1,33 @@
 import "react-native-reanimated";
 
-import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  FlatList,
-} from "react-native";
-import { useEffect, useState } from "react";
-
-const INIT_ERROR_STATE = {
-  isError: false,
-  message: "",
-};
+import { StyleSheet, View, FlatList } from "react-native";
+import { useState } from "react";
+import GoalItem from "@/components/GoalItem";
+import GoalInput from "@/components/GoalInput";
 
 export default function RootLayout() {
-  const [todos, setTodos] = useState<string[]>([]);
-  const [text, setText] = useState("");
-  const [error, setError] = useState(INIT_ERROR_STATE);
+  const [goals, setGoals] = useState<string[]>([]);
 
-  const goalInputHandler = (e) => {
-    setText(e);
+  const addGoalHandler = (goalItem: string) => {
+    setGoals((prev) => [...prev, goalItem]);
   };
 
-  const addGoalHandler = () => {
-    const isEqual = todos.find((todo) => text === todo);
-    if (!isEqual) {
-      setTodos((prev) => [...prev, text]);
-      setError(INIT_ERROR_STATE);
-    } else {
-      setError({ isError: true, message: "중복되는 할일이 있습니다." });
-    }
-  };
-
-  const deleteGoalHandler = (selectedTodo) => {
-    const nextTodos = todos.filter((todo) => todo !== selectedTodo);
-    setTodos(nextTodos);
+  const deleteGoalHandler = (goalItem: string) => {
+    const nextTodos = goals.filter((goal) => goal !== goalItem);
+    setGoals(nextTodos);
   };
 
   return (
     <View style={styles.appContainer}>
       <View style={styles.inputContainer}>
-        <View style={styles.inputBox}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="your course goal!"
-            value={text}
-            onChangeText={goalInputHandler}
-          />
-          <Button title="add goal" onPress={addGoalHandler} />
-        </View>
-        {error.isError && <Text>{error.message}</Text>}
+        <GoalInput onGoal={addGoalHandler} goals={goals} />
       </View>
       <View style={styles.goalsContainer}>
         <FlatList
-          data={todos}
+          data={goals}
           renderItem={(itemData) => {
             return (
-              <View style={styles.goalItem}>
-                <Text style={styles.goalText}>{itemData.item}</Text>
-                {/* React Native는 스타일 상속이 없다. */}
-                <Button
-                  color="#5e0acc"
-                  title="x"
-                  onPress={() => deleteGoalHandler(itemData.item)}
-                />
-              </View>
+              <GoalItem goalItem={itemData} onDelete={deleteGoalHandler} />
             );
           }}
         />
@@ -88,33 +48,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#cccccc",
   },
-  inputBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: "#cccccc",
-    width: "80%",
-    marginRight: 8,
-    padding: 8,
-  },
   goalsContainer: {
     flex: 7,
-  },
-  goalItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    margin: 8,
-    padding: 4,
-    paddingHorizontal: 8,
-    borderRadius: 6,
-    backgroundColor: "#5e0acc",
-  },
-  goalText: {
-    color: "#ffffff",
   },
 });
 
