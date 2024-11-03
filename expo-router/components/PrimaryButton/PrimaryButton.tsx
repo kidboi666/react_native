@@ -1,19 +1,16 @@
-import { PropsWithChildren } from "react";
-import { Button, Text } from "tamagui";
+import { PropsWithChildren } from 'react'
+import { Button, Text } from 'tamagui'
 
 interface Props {
-  onPress: () => void;
+  onPress: () => void
 }
 
-export const PrimaryButton = ({
-  children,
-  onPress,
-}: PropsWithChildren<Props>) => {
+export const PrimaryButton = ({ children, onPress }: PropsWithChildren<Props>) => {
   return (
     <Button
       onPress={onPress}
       pressStyle={{
-        backgroundColor: "$color.primary500",
+        backgroundColor: '$color.primary500',
         opacity: 0.75,
       }}
       borderRadius={24}
@@ -25,5 +22,5 @@ export const PrimaryButton = ({
         {children}
       </Text>
     </Button>
-  );
-};
+  )
+}
