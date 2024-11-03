@@ -1,16 +1,15 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Alert } from 'react-native'
 import { useRouter } from 'expo-router'
 import { Input, Text, XStack, YStack } from 'tamagui'
 import { useToastController } from '@tamagui/toast'
-import { GameContext } from 'context/useGame'
+import { useAnswer } from 'context/useGame'
 import BackgroundProvider from 'providers/background_provider'
 import SafeAreaViewProvider from 'providers/safe_area_view_provider'
 import { PrimaryButton } from 'components/PrimaryButton'
 
 export default function StartGameScreen() {
-  const { answer, life, countLife, chosenNumbers, initAnswer, addChosenNumber } =
-    useContext(GameContext)
+  const { answer, life, countLife, chosenNumbers, resetAnswer, addChosenNumber } = useAnswer()
   const [userNumber, setUserNumber] = useState('')
   const toast = useToastController()
   const router = useRouter()
@@ -77,7 +76,7 @@ export default function StartGameScreen() {
   console.log(answer)
 
   useEffect(() => {
-    initAnswer()
+    resetAnswer()
   }, [])
 
   return (

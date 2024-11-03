@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, PropsWithChildren, useContext, useMemo, useState } from 'react'
 
 interface IGameContext {
   answer: number
@@ -6,28 +6,23 @@ interface IGameContext {
   chosenNumbers: number[]
   addChosenNumber: (yourNumber: number) => void
   countLife: () => void
-  initAnswer: () => void
+  resetAnswer: () => void
 }
 
-export const GameContext = createContext<IGameContext>({
-  answer: 0,
-  life: 5,
-  chosenNumbers: [],
-  addChosenNumber: () => null,
-  countLife: () => null,
-  initAnswer: () => null,
-})
+export const GameContext = createContext<IGameContext | null>(null)
 
 export const useAnswer = () => {
-  return useContext(GameContext)
+  const context = useContext(GameContext)
+  if (!context) {
+    throw new Error('useAnswer는 GameProvider 안에서만 사용되어야 합니다.')
+  }
+  return context
 }
 
-export const initAnswer = useCallback(() => {
-  return Math.floor(Math.random() * 99)
-}, [])
+export const generateAnswer = () => Math.floor(Math.random() * 99)
 
 export default function GameProvider({ children }: PropsWithChildren) {
-  const [answer, setAnswer] = useState(initAnswer())
+  const [answer, setAnswer] = useState(generateAnswer())
   const [life, setLife] = useState(5)
   const [chosenNumbers, setChosenNumbers] = useState<number[]>([])
 
@@ -38,9 +33,9 @@ export default function GameProvider({ children }: PropsWithChildren) {
       chosenNumbers,
       addChosenNumber: (yourNumber: number) => setChosenNumbers((prev) => [...prev, yourNumber]),
       countLife: () => setLife((prev) => prev - 1),
-      initAnswer: () => setAnswer(initAnswer()),
+      resetAnswer: () => setAnswer(generateAnswer()),
     }),
-    [answer, life, chosenNumbers],
+    [answer],
   )
 
   return <GameContext.Provider value={game}>{children}</GameContext.Provider>
